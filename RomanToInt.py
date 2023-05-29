@@ -2,75 +2,80 @@
 
 import time
 
-class ExecTime:
-    """Measures time it took to execute task."""
 
-    def __init__(self, funct:callable) -> None:
+class ExecTime:
+    """Decorator class. Measures time to execute task."""
+
+    def __init__(self, funct: callable):
         self.funct = funct
 
-
-    def __call__(self, *args, **kwargs) -> None:
+    def __call__(self, *args, **kwargs) -> callable:
         """Measures execution time of decorated function."""
         time_start = time.perf_counter()
         wrapped_funct = self.funct(self, *args, **kwargs)
         time_end = time.perf_counter()
-        print(f'Method: {self.funct.__name__}. Exec time: {time_end-time_start}')
+        print(f"Method: {self.funct.__name__}. Exec time: {time_end-time_start}")
         return wrapped_funct
 
+
 class RomanToInt:
-    
+    """Converts roman number to arabic. 
+    Returns: integer number.
+    """
     @ExecTime
-    def roman_to_int_list(self, roman_number:str) ->int:
+    def roman_to_int_list(self, roman_number: str) -> int:
         roman_list = []
         roman_list[:0] = roman_number
-        roman_nums = {'I':1, 'V':5, 'X':10, 'L':50, 'C':100, 'D':500, 'M':1000}
+        roman_nums = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
         converted_number = 0
-        
+
         for index_no, roman_num in enumerate(roman_list):
             roman_list[index_no] = roman_nums[roman_num]
-        
+
         for index_no, value in enumerate(roman_list[:-1]):
-            if value >= roman_list[index_no+1]:
+            if value >= roman_list[index_no + 1]:
                 converted_number += value
-            else:    
+            else:
                 converted_number -= value
-            
-        converted_number += roman_list[-1]   
-            
+
+        converted_number += roman_list[-1]
+
         return converted_number
 
+    """Converts roman number to arabic. Uses generator.
+    Returns: integer number.
+    """
     @ExecTime
-    def roman_to_int_gen(self, roman_number:str) ->int:
-        
+    def roman_to_int_gen(self, roman_number: str) -> int:
         roman_gen = (x for x in roman_number)
 
-        roman_nums = {'I':1, 'V':5, 'X':10, 'L':50, 'C':100, 'D':500, 'M':1000}     
+        roman_nums = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
         converted_number = 0
-        
+
         prev_item = next(roman_gen)
 
         converted_number = 0
-        for item in roman_gen:    
-    
+        for item in roman_gen:
             if roman_nums[prev_item] >= roman_nums[item]:
                 converted_number += roman_nums[prev_item]
                 prev_item = item
-            else:    
+            else:
                 converted_number -= roman_nums[prev_item]
                 prev_item = item
-   
+
         converted_number += roman_nums[prev_item]
-            
+
         return converted_number
- 
+
+
 def main():
     roman = RomanToInt()
-    
+
     numbers_roman = ("III", "LVIII", "MCMXCIV")
     for number in numbers_roman:
-        print(roman.roman_to_int_list(number)) 
-        print(roman.roman_to_int_gen(number)) 
-    
-    
-if __name__ == '__main__':
-    main()    
+        print(roman.roman_to_int_list(number))
+        print(roman.roman_to_int_gen(number))
+
+
+if __name__ == "__main__":
+    main()
